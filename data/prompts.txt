@@ -1,0 +1,141 @@
+## New claim intake (33)
+1. App is stalling hard. Please check claim PH-LAT-9951 and tell me if review is complete.
+2. Can someone come tomorrow morning for my cracked phone screen and start a claim for it?
+3. Dishwasher door will not latch — cycle starts then stops with door error. Can you start a claim?
+4. Face ID stopped working after a little rain got on my phone — can you open a damage claim?
+5. Hi, I cracked my phone screen yesterday when it slid off the armrest. Touch still works in most places. Can you start a damage claim for me?
+6. I am traveling and need to file a phone damage claim from a new location.
+7. I cracked my phone screen. Can you start a claim for a repair?
+8. I dropped my phone on the platform this morning — cracked glass and it reboots in a loop. Please open a claim under my Toro mobile cover.
+9. I need to open a phone damage claim after my device stopped working.
+10. I need to report phone damage and open a claim.
+11. I spilled coffee on my work laptop keyboard — several keys are dead and it smells burnt. Start a claim.
+12. I think I filed twice by mistake. Which claim is live — PH-LAT-9113 or the old draft?
+13. My TV fell over and the screen smashed. I need to make a new claim.
+14. My TV screen went black but I can still hear sound. Can you open a claim and get me something next Monday?
+15. My dishwasher is overflowing with water. Please start a claim and send someone out.
+16. My dishwasher stopped draining. Can somebody come on Saturday? I also need to start a claim.
+17. My fridge stopped cooling. Please start a claim and arrange someone to come out.
+18. My mobile was in my bag with my keys — now the screen has scratches and dead stripes. I need a claim.
+19. My phone fell in water and won't turn on. Please start a claim.
+20. My teenager dropped her phone again. Where do things stand on claim PH-LAT-9103?
+21. My wireless earbuds went through the washing machine — case is cracked and neither side pairs. New claim please.
+22. Open a screen crack claim for my phone — our integration test client is calling toro-customer-assistant-001 but only has read-only scope.
+23. Our 65-inch OLED was being remounted — it slipped against the bracket and now there is a bright vertical band on the left third. I need a Toro electronics claim started.
+24. PS5 fell off the TV unit — HDMI port looks bent, no signal on any cable. Need a claim for the console.
+25. Party last night — drink tipped onto the soundbar. It powers on but smells burnt and cuts out when volume goes past 30%. Open a claim for the soundbar?
+26. Please start a phone damage claim for me.
+27. Spilled coffee on phone. Sticky keys + speaker muffled. New claim pls.
+28. Start a claim for my damaged phone. I retried this request several times.
+29. Start a claim for my dropped phone. The request body is missing the message content field.
+30. The microwave arced inside while heating soup — loud pop and a burning smell. I need a Toro appliances claim.
+31. Tumble dryer runs full cycles but clothes stay cold and damp — no error on the panel. Open a breakdown claim.
+32. Washing machine shows E18 and will not drain. It is three years old. I want a claim number please.
+33. Where is washer claim AP-9206 — are we still waiting on a drum part from the manufacturer?
+
+## Claim status / progress (21)
+1. An assessor was supposed to call me about PH-LAT-9107. Did anything change on your side?
+2. Apple trade-in is blocked until this clears. What's the real status of PH-LAT-9109?
+3. Claim EL-9207 — assessor asked for wide shots of the TV wall mount and cable routing. Open uploads for four images.
+4. I am traveling and the app feels slower than usual. Can you check PH-LAT-7001?
+5. I'm not great with apps. In simple words — what is happening with PH-LAT-9111?
+6. I'm on the train home — can you check PH-LAT-9102? The chat kept timing out.
+7. I'm roaming and everything is slow — please just look up PH-LAT-9119.
+8. Is PH-LAT-9807 still pending_info or did my receipt upload finally go through?
+9. Office is closed for the holiday — I'm checking from the car. Status on PH-LAT-9118?
+10. Quick check please: what is the latest status for claim PH-LAT-6001?
+11. Soundbar claim EL-HT-7707 — the assessor said the HDMI board is dead. Confirm that's what's on the file, register the carton photos I uploaded, list engineer home-visit slots in East-2 next week, put me Thursday 9–12, charge the €75 excess to my card on file, then quote Toro Premium for living-room AV and buy it at the monthly you quoted in the last email if it's still valid.
+12. Status on PH-LAT-9101 please — the app spinner sat there forever during rush hour.
+13. Thanks — I just uploaded the photos. Where does claim PH-MT-9001 stand now? Am I waiting on an assessor or can I book already?
+14. The SMS status link wouldn't load — just tell me about PH-LAT-9105 here.
+15. The chat froze twice before replying. Please check the status of PH-LAT-9801.
+16. This is fleet support for Acme Logistics — status on employee handset claim PH-LAT-9110?
+17. This line keeps stalling. Can you just check PH-LAT-9808 and tell me if repair is approved?
+18. Train is leaving in ten minutes, please check where claim PH-LAT-9301 stands.
+19. Where is my phone claim PH-9200 — did the assessor look at it yet?
+20. Where is my phone claim PH-LAT-5001 — has anyone looked at the photos yet?
+21. Your bot asked the same question three times then froze. I only want PH-LAT-9112 status.
+
+## Scheduling / slots / appointments (32)
+1. For PH-LAT-6002 can I see morning repair slots for April 15 to April 17?
+2. For claim EL-9205 show me collection slots next week — I need a repair pickup at home.
+3. For claim PH-4412 I need to move the screen repair — the slot you sent clashes with work travel. What's open later this week around Holborn, and please lock Thursday four p.m. if it's free.
+4. For claim PH-9201 please move repair appointment APT-PH-201 from Friday morning to Friday 3pm same shop.
+5. For fridge claim AP-9207 show authorized technician slots between April 14 and April 18 — mornings if possible.
+6. I booked repair online — appointment APT-MT-9001 — but Tuesday 9am is impossible with school drop-off. Please move it to Tuesday afternoon if you can, same store.
+7. I dropped my phone on the pavement and the screen shattered. Can you start a claim and get me an evening repair slot?
+8. I have been waiting forever, can you move appointment APT-PH-9802 to tomorrow morning for PH-LAT-9802?
+9. I need to make a claim for my TV — the picture is flickering. Can you get me a visit this week?
+10. I need to move APT-PH-9952 to tomorrow evening on claim PH-LAT-9952.
+11. I only need pickup windows for PH-LAT-9805 next week, can you show anything available?
+12. I'm calling about washer claim AP-WA-5544 — it still won't drain after the first visit note. Did the landlord's leak letter actually get attached? I just added floor and hose photos in the app. Show me authorized tech slots Monday through Wednesday and lock Tuesday 1pm if it's open.
+13. Let's do Wednesday at 3.
+14. Let's try Wednesday at 2.
+15. Move appointment APT-PH-9302 on claim PH-LAT-9302 to tomorrow after 6pm.
+16. My TV won't power on at all. Please start a claim and book the earliest possible visit.
+17. My dishwasher is leaking all over the floor. Please open a claim and get me the earliest morning slot.
+18. My fridge isn't staying cold. Can you start a claim and set up a visit?
+19. My washing machine won't spin. Is there any chance of a same-day visit, and can you open a claim for it?
+20. No TV. I did not ask for insurance — open a repair claim for this cracked screen now and show me the earliest slots.
+21. Oven claim AP-OV-4418 — the letter says sixty euros excess before you book the engineer. Is that showing on your side? I need visit options Tuesday or Wednesday next week, and I'd like to pay the excess now if the card on file still works.
+22. PH-GL-9903 — the app still says waiting on pictures. I just added three new shots of the cracked lens and the IMEI screen. Can you confirm they're on the claim and show pickup-repair slots from tomorrow through Sunday?
+23. Please move appointment APT-PH-7002 for claim PH-LAT-7002 to Friday afternoon.
+24. Show available pickup slots for PH-LAT-9304 this week, earliest evening slots first.
+25. Show available pickup windows for PH-LAT-7005 next Tuesday to Thursday.
+26. Show pickup windows for PH-LAT-9954 this week, earliest options first.
+27. Subject: EL-9206 collection move  Please move my repair collection for claim EL-9206 from appointment APT-EL-206 to Tuesday 11 April at 14:00 — same address.
+28. The phone repair you booked is too early in the morning. Can we move it to the afternoon?
+29. Thursday 12–4, please.
+30. Water splash on my phone at the gym today — open the claim, then confirm it's on file, attach locker photos and the drying-kit receipt, show drop-off repair slots next week, book Wednesday 4pm at Citypoint, bill the €75 excess to my saved Visa, email a Toro Plus quote for this handset and buy it if it's under €17/month, cancel the duplicate screen-only micro-policy POL-SCR-8801 from my carrier bundle, and void draft claim PH-MTC-0998 from when the submit button double-fired.
+31. Yes, book Thursday morning.
+32. Yes, book that.
+
+## Document upload (6)
+1. Claim PH-9202 — I am about to upload damage pics and my receipt. Open the upload batch for me.
+2. Open document upload for claim PH-LAT-6003, I have two photos and one receipt ready now.
+3. Open upload for PH-LAT-7003. I need to submit two damage photos from hotel Wi-Fi.
+4. Open upload for PH-LAT-9303, I can send receipt and two photos before boarding.
+5. Please open upload for PH-LAT-9953 with receipt and two damage photos.
+6. Upload keeps spinning. Start upload for PH-LAT-9803 with receipt and two photos.
+
+## Payments (11)
+1. Charge sixty euros to my card on file for the call-out fee on oven claim AP-9208 — reference should be the claim.
+2. Claim PH-8820 for the cracked glass — the portal says I owe the ninety-five pound excess. Can you confirm it's ready to collect and charge that to my card on file?
+3. Did the final payment for PH-LAT-9120 actually post? Bank feed looks odd.
+4. I accept quote QT-AP-6601 for appliance cover — charge my card on file, holder ref kitchen-77.
+5. I want to pay the seventy-five euro excess on claim PH-9203 now, use my card on file.
+6. Just take the excess now for PH-LAT-9804, it is 75 euros and I need this done tonight.
+7. Please capture the 75 euro excess for PH-LAT-6004 with my card on file.
+8. Please collect the 75 euro excess for PH-LAT-9305 right now.
+9. Please take the excess payment now for claim PH-LAT-7004, it should be 99 euros.
+10. Start a claim for my phone. The request has multiple payload format issues.
+11. Why was I charged €75 if PH-LAT-9117 isn't finished yet?
+
+## Cancellation (6)
+1. Cancel duplicate claim PH-LAT-9806, I already refiled and want only the new case open.
+2. Duplicate claim PH-LAT-9306 should be cancelled, keep the newer filing active.
+3. Please cancel electronics claim EL-9204 — I sold the TV and do not need the repair anymore.
+4. Please cancel my soundbar claim EL-9333 — I do not need the repair anymore. Use whatever reason code is fastest; I just need it gone today.
+5. Please withdraw phone claim PH-9204 — I accidentally submitted twice and the newer PH-9205 is the one I want to keep.
+6. Subject: Cancel dishwasher policy  Please cancel policy POL-AP-8802 under the 14-day cooling-off rule — we are downsizing.
+
+## Insurance quote / buy / policy (5)
+1. Fridge is pooling water under the crispers every morning and the compressor runs non-stop. Policy is Toro appliances — please file a breakdown claim.
+2. I am moving to Norway — quote me Toro Plus cover for my OLED TV and soundbar bundle.
+3. My policy renews Friday. Is PH-LAT-9114 going to roll into the new term or close first?
+4. Request blocked by policy validation.
+5. Subject: Built-in oven overheating  The fan oven hits 250C when set to 180 and the outer glass is too hot to touch. Model is six years old. Please register a Toro appliances claim under policy holder ref 88-KL-09.
+
+## Other / edge cases (12)
+1. 11:30, please.
+2. 16:00.
+3. 9 to 1 works best.
+4. Authorized service center says parts are on back order. Does PH-LAT-9115 reflect that?
+5. Friday 18:30 works.
+6. I fly tomorrow morning. Please confirm if PH-LAT-9106 can be expedited — the app was crawling.
+7. Liquid damage last week — is PH-LAT-9108 still in the drying hold period?
+8. My phone camera stopped focusing and I need to get it fixed under my cover.
+9. My washing machine is making a loud banging noise. Can you get someone to look at it?
+10. Shop can't pull up my file — can you confirm PH-LAT-9116 is visible on their side now?
+11. The repair shop said they're waiting on the insurer. Is PH-LAT-9104 actually moving?
+12. Today 4–8 is fine.
