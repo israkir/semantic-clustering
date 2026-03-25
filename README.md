@@ -28,6 +28,8 @@ Detailed algorithm docs:
 make
 make java-viz VERSION=v1     # Java only → outputs/java_v1_tribuo_hdbscan.png + .json
 make python-viz VERSION=v1   # Python only → outputs/python_v1_umap_hdbscan.png + .json
+make python-viz VERSION=v2   # Python only → outputs/python_v2_umap_hdbscan.png + .json
+make python-viz VERSION=v3   # Python only → outputs/python_v3_bertopic.png + .json
 make cluster-viz VERSION=v1  # both pipelines, then open both PNGs if possible
 ```
 
@@ -49,6 +51,8 @@ INTERACTIVE=1 make python-viz VERSION=v1
 |----------|-----|------|
 | Java (v1) | `outputs/java_v1_tribuo_hdbscan.png` | `outputs/java_v1_tribuo_hdbscan.json` |
 | Python (v1) | `outputs/python_v1_umap_hdbscan.png` | `outputs/python_v1_umap_hdbscan.json` |
+| Python (v2) | `outputs/python_v2_umap_hdbscan.png` | `outputs/python_v2_umap_hdbscan.json` |
+| Python (v3) | `outputs/python_v3_bertopic.png` | `outputs/python_v3_bertopic.json` |
 
 ## Cleanup
 

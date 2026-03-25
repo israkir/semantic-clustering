@@ -1,0 +1,23 @@
+[project]
+name = "prompt-clustering-viz"
+version = "0.1.0"
+description = "BERTopic-based clustering with topic/cluster labels for user prompts"
+requires-python = ">=3.10"
+dependencies = [
+    "bertopic",
+    "sentence-transformers>=2.2.0",
+    "umap-learn>=0.5.6",
+    "hdbscan>=0.8.33",
+    "numpy>=1.24.0",
+    "pandas>=2.0.0",
+    "scikit-learn",
+    "matplotlib>=3.8.0",
+    "seaborn>=0.13.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["prompt_cluster"]

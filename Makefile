@@ -15,7 +15,11 @@ VENV_PYTHON := $(VENV_DIR)/bin/python
 VENV_STAMP := $(VENV_DIR)/.install-stamp
 
 JAVA_VIZ_PNG := $(OUTPUT_DIR)/java_$(VERSION)_tribuo_hdbscan.png
-PYTHON_VIZ_PNG := $(OUTPUT_DIR)/python_$(VERSION)_umap_hdbscan.png
+PYTHON_VIZ_SUFFIX := _umap_hdbscan
+ifeq ($(VERSION),v3)
+	PYTHON_VIZ_SUFFIX := _bertopic
+endif
+PYTHON_VIZ_PNG := $(OUTPUT_DIR)/python_$(VERSION)$(PYTHON_VIZ_SUFFIX).png
 SHOW ?= 0
 INTERACTIVE ?= $(SHOW)
 
@@ -51,11 +55,11 @@ ONNX_VOCAB := $(ONNX_DIR)/vocab.txt
 help:
 	@printf '$(BOLD)$(CYAN)%s$(RESET)\n' 'semantic-clustering'
 	@printf '$(DIM)%s$(RESET)\n' '  Java: BGE-small ONNX → Tribuo HDBSCAN* → Smile UMAP (tool-mismatch defaults).'
-	@printf '$(DIM)%s$(RESET)\n' '  Python: MiniLM + UMAP + HDBSCAN — comparison baseline only.'
+	@printf '$(DIM)%s$(RESET)\n' '  Python: v1 baseline (MiniLM+UMAP+HDBSCAN), v2 Java-matching, v3 BERTopic labeler.'
 	@printf '\n'
 	@printf '$(BOLD)%s$(RESET)\n' 'Targets'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'java-viz' 'Java only → $(DIM)outputs/java_<VERSION>_tribuo_hdbscan.png|json$(RESET)'
-	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'python-viz' 'Python only → $(DIM)outputs/python_<VERSION>_umap_hdbscan.png|json$(RESET)'
+	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'python-viz' 'Python only → $(DIM)outputs/python_<VERSION>$(PYTHON_VIZ_SUFFIX).png|json$(RESET)'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'cluster-viz' 'Run $(DIM)java-viz$(RESET) + $(DIM)python-viz$(RESET); open both PNGs'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'outputs-dir' 'Create $(DIM)outputs/$(RESET)'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'git-lfs-pull' '$(DIM)git lfs pull$(RESET) (ONNX weights)'
