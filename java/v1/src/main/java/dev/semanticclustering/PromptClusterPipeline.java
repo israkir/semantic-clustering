@@ -45,6 +45,7 @@ public final class PromptClusterPipeline {
     private static final String TAG = "[JAVA|pipeline]";
     private static final int BANNER_WIDTH = 76;
     private static final String BGE_ONNX_SUBDIR = "model/onnx/bge-small-en-v1.5";
+    private static final String ENV_VERSION = "SEMANTIC_CLUSTERING_VERSION";
 
     static {
         Logger.getLogger("org.tribuo.clustering.hdbscan.HdbscanTrainer").setLevel(Level.WARNING);
@@ -65,6 +66,10 @@ public final class PromptClusterPipeline {
         Path vocabPath;
         int maxSeqLen = 512;
         String modelLabel = "bge-small-en-v1.5";
+        String version = System.getenv(ENV_VERSION);
+        if (version == null || version.isBlank()) {
+            version = "unknown";
+        }
 
         if (args.length >= 4) {
             promptsPath = Path.of(args[0]);
@@ -85,7 +90,7 @@ public final class PromptClusterPipeline {
             vocabPath = resolved[1];
         } else {
             promptsPath = repoRoot.resolve("data/prompts.txt");
-            outPath = repoRoot.resolve("outputs/java_tribuo_hdbscan.png");
+            outPath = repoRoot.resolve("outputs/java_v1_tribuo_hdbscan.png");
             Path[] resolved = resolveOnnxPaths(repoRoot);
             onnxPath = resolved[0];
             vocabPath = resolved[1];
@@ -94,6 +99,7 @@ public final class PromptClusterPipeline {
         String line = "=".repeat(BANNER_WIDTH);
         System.out.println();
         System.out.println(line);
+        System.out.println("  Version: " + version);
         System.out.println("  BGE-small ONNX · Tribuo HDBSCAN* · UMAP (PCA fallback) — tool-mismatch defaults");
         System.out.println("  Noise: cluster id 0");
         System.out.println(line);
@@ -147,17 +153,16 @@ public final class PromptClusterPipeline {
     }
 
     /**
-     * When {@code mvn exec:java} runs from {@code java/}, {@code user.dir} is that module; when running the
-     * JAR from the repo root, {@code user.dir} is the repo. Prefer parent of {@code java/} when that looks
-     * like this project.
+     * When {@code mvn exec:java} runs from {@code java/v1/}, {@code user.dir} is that module; when running
+     * the JAR from the repo root, {@code user.dir} is the repo.
+     *
+     * This walks upwards until it finds {@code data/prompts.txt} (more robust than relying on folder names).
      */
     private static Path inferRepoRoot() {
         Path cwd = Path.of(System.getProperty("user.dir")).toAbsolutePath().normalize();
-        if (Files.isRegularFile(cwd.resolve("pom.xml"))
-                && "java".equalsIgnoreCase(String.valueOf(cwd.getFileName()))) {
-            Path parent = cwd.getParent();
-            if (parent != null) {
-                return parent;
+        for (Path p = cwd; p != null; p = p.getParent()) {
+            if (Files.isRegularFile(p.resolve("data/prompts.txt"))) {
+                return p;
             }
         }
         return cwd;

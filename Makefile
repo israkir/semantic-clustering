@@ -3,13 +3,19 @@
 
 REPO_ROOT := $(abspath .)
 OUTPUT_DIR := $(REPO_ROOT)/outputs
-PYTHON_DIR := $(REPO_ROOT)/python
+PROMPTS_FILE ?= $(REPO_ROOT)/data/prompts.txt
+
+VERSION ?= v1
+
+JAVA_DIR := $(REPO_ROOT)/java/$(VERSION)
+PYTHON_DIR := $(REPO_ROOT)/python/$(VERSION)
+
 VENV_DIR := $(PYTHON_DIR)/.venv
 VENV_PYTHON := $(VENV_DIR)/bin/python
 VENV_STAMP := $(VENV_DIR)/.install-stamp
-PROMPTS_FILE ?= $(REPO_ROOT)/data/prompts.txt
-JAVA_VIZ_PNG := $(OUTPUT_DIR)/java_tribuo_hdbscan.png
-PYTHON_VIZ_PNG := $(OUTPUT_DIR)/python_umap_hdbscan.png
+
+JAVA_VIZ_PNG := $(OUTPUT_DIR)/java_$(VERSION)_tribuo_hdbscan.png
+PYTHON_VIZ_PNG := $(OUTPUT_DIR)/python_$(VERSION)_umap_hdbscan.png
 SHOW ?= 0
 INTERACTIVE ?= $(SHOW)
 
@@ -36,7 +42,11 @@ ONNX_DIR := $(REPO_ROOT)/model/onnx/bge-small-en-v1.5
 ONNX_MODEL := $(ONNX_DIR)/model.onnx
 ONNX_VOCAB := $(ONNX_DIR)/vocab.txt
 
-.PHONY: help cluster-viz outputs-dir git-lfs-pull ensure-onnx-model java-viz python-viz clean clean-data clean-venv
+.PHONY: help \
+	java-viz python-viz cluster-viz \
+	outputs-dir \
+	git-lfs-pull ensure-onnx-model \
+	clean clean-data clean-venv
 
 help:
 	@printf '$(BOLD)$(CYAN)%s$(RESET)\n' 'semantic-clustering'
@@ -44,8 +54,8 @@ help:
 	@printf '$(DIM)%s$(RESET)\n' '  Python: MiniLM + UMAP + HDBSCAN — comparison baseline only.'
 	@printf '\n'
 	@printf '$(BOLD)%s$(RESET)\n' 'Targets'
-	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'java-viz' 'Java only → $(DIM)outputs/java_tribuo_hdbscan.png|json$(RESET)'
-	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'python-viz' 'Python only → $(DIM)outputs/python_umap_hdbscan.png|json$(RESET)'
+	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'java-viz' 'Java only → $(DIM)outputs/java_<VERSION>_tribuo_hdbscan.png|json$(RESET)'
+	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'python-viz' 'Python only → $(DIM)outputs/python_<VERSION>_umap_hdbscan.png|json$(RESET)'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'cluster-viz' 'Run $(DIM)java-viz$(RESET) + $(DIM)python-viz$(RESET); open both PNGs'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'outputs-dir' 'Create $(DIM)outputs/$(RESET)'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'git-lfs-pull' '$(DIM)git lfs pull$(RESET) (ONNX weights)'
@@ -53,15 +63,17 @@ help:
 	@printf '$(BOLD)%s$(RESET)\n' 'Cleanup'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'clean' '$(DIM)mvn clean$(RESET); Python caches $(DIM)(keeps .venv)$(RESET)'
 	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'clean-data' 'Remove $(DIM)outputs/$(RESET)'
-	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'clean-venv' 'Remove $(DIM)python/.venv/$(RESET)'
+	@printf '  $(GREEN)%-18s$(RESET) %s\n' 'clean-venv' 'Remove $(DIM)python/<VERSION>/.venv$(RESET)'
 	@printf '\n'
-	@printf '$(WHITE)PROMPTS_FILE$(RESET)=$(DIM)$(PROMPTS_FILE)$(RESET)  $(WHITE)INTERACTIVE$(RESET)=$(DIM)1$(RESET) for Python $(DIM)matplotlib --show$(RESET)\n'
+	@printf '$(WHITE)VERSION$(RESET)=$(DIM)$(VERSION)$(RESET)  $(WHITE)PROMPTS_FILE$(RESET)=$(DIM)$(PROMPTS_FILE)$(RESET)  $(WHITE)INTERACTIVE$(RESET)=$(DIM)1$(RESET) for Python $(DIM)matplotlib --show$(RESET)\n'
 
 $(VENV_PYTHON):
+	@printf '%s\n' "$(DIM)Creating virtualenv at $(VENV_DIR)…$(RESET)"
 	@cd "$(PYTHON_DIR)" && python3 -m venv "$(VENV_DIR)"
 
 $(VENV_STAMP): $(PYTHON_DIR)/pyproject.toml | $(VENV_PYTHON)
-	@cd "$(PYTHON_DIR)" && . "$(VENV_DIR)/bin/activate" && pip install -q -e .
+	@printf '%s\n' "$(DIM)Installing Python dependencies (editable) … this may take a minute on first run.$(RESET)"
+	@cd "$(PYTHON_DIR)" && . "$(VENV_DIR)/bin/activate" && pip install -e .
 	@touch "$(VENV_STAMP)"
 
 outputs-dir:
@@ -84,13 +96,26 @@ ensure-onnx-model: git-lfs-pull
 	fi
 
 java-viz: outputs-dir ensure-onnx-model
-	@cd "$(REPO_ROOT)/java" && mvn -q compile exec:java \
+	@if [ ! -f "$(JAVA_DIR)/pom.xml" ]; then \
+		printf '%s\n' "$(RED)error:$(RESET) Java module not found: $(JAVA_DIR)"; \
+		printf '%s\n' "  Create it (e.g. java/$(VERSION)/pom.xml) or run: make java-viz VERSION=v1"; \
+		exit 1; \
+	fi
+	@printf '%s\n' "$(BOLD)Running Java clustering VERSION=$(VERSION)$(RESET)"
+	@cd "$(JAVA_DIR)" && SEMANTIC_CLUSTERING_VERSION="$(VERSION)" mvn -q compile exec:java \
 		-Dexec.mainClass=dev.semanticclustering.PromptClusterPipeline \
 		-Dexec.args="$(PROMPTS_FILE) $(JAVA_VIZ_PNG)"
 
 python-viz: outputs-dir $(VENV_STAMP)
+	@if [ ! -f "$(PYTHON_DIR)/pyproject.toml" ]; then \
+		printf '%s\n' "$(RED)error:$(RESET) Python module not found: $(PYTHON_DIR)"; \
+		printf '%s\n' "  Create it (e.g. python/$(VERSION)/pyproject.toml) or run: make python-viz VERSION=v1"; \
+		exit 1; \
+	fi
+	@printf '%s\n' "$(BOLD)Running Python clustering VERSION=$(VERSION)$(RESET)"
 	@cd "$(PYTHON_DIR)" && \
 		. "$(VENV_DIR)/bin/activate" && \
+		export SEMANTIC_CLUSTERING_VERSION="$(VERSION)" && \
 		if [ "$(INTERACTIVE)" = "1" ]; then \
 			python prompt_cluster.py --prompts "$(PROMPTS_FILE)" --output "$(PYTHON_VIZ_PNG)" --show; \
 		else \
@@ -98,18 +123,21 @@ python-viz: outputs-dir $(VENV_STAMP)
 		fi
 
 cluster-viz: outputs-dir java-viz python-viz
-	@echo "Opening outputs (if a viewer is available)..."
+	@echo "Opening outputs for VERSION=$(VERSION) (if a viewer is available)..."
 	@$(OPEN_CMD) "$(JAVA_VIZ_PNG)" 2>/dev/null || true
 	@$(OPEN_CMD) "$(PYTHON_VIZ_PNG)" 2>/dev/null || true
 
+
 clean:
-	@cd "$(REPO_ROOT)/java" && mvn -q clean
-	@find "$(PYTHON_DIR)" -path "$(PYTHON_DIR)/.venv" -prune -o -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	@rm -rf "$(PYTHON_DIR)"/*.egg-info "$(PYTHON_DIR)/build" "$(PYTHON_DIR)/dist"
+	@if [ -f "$(JAVA_DIR)/pom.xml" ]; then (cd "$(JAVA_DIR)" && mvn -q clean); fi
+	@if [ -d "$(PYTHON_DIR)" ]; then \
+		find "$(PYTHON_DIR)" -path "$(PYTHON_DIR)/.venv" -prune -o -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true; \
+		rm -rf "$(PYTHON_DIR)"/*.egg-info "$(PYTHON_DIR)/build" "$(PYTHON_DIR)/dist"; \
+	fi
 	@rm -f "$(VENV_STAMP)"
 
 clean-data:
 	@rm -rf "$(OUTPUT_DIR)"
 
 clean-venv:
-	@rm -rf "$(VENV_DIR)"
+	@rm -rf "$(VENV_DIR)" "$(REPO_ROOT)/python/.venv"

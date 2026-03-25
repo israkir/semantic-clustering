@@ -9,6 +9,8 @@ __pycache__/
 .eggs/
 python/build/
 python/dist/
+python/*/build/
+python/*/dist/
 
 # Virtual environments
 .venv/
