@@ -6,9 +6,15 @@ Clusters **user prompts** with the same defaults as **tool-mismatch-clustering**
 
 - Weights: `model/onnx/bge-small-en-v1.5/` — **`model.onnx` is Git LFS** (`.gitattributes`). After clone: `git lfs install && git lfs pull` or `make git-lfs-pull`.
 
+Detailed algorithm docs:
+- `java/v1/README.md`
+
 ## Python baseline (comparison only)
 
 **MiniLM** (`all-MiniLM-L6-v2`), **UMAP**, **Python HDBSCAN** — different embeddings and HDBSCAN implementation than Java. Compare with Java via `make cluster-viz VERSION=v1`.
+
+Detailed algorithm docs:
+- `python/v1/README.md`
 
 ## Requirements
 
