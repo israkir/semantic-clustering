@@ -1,7 +1,7 @@
 # Maven (java/target and any nested module target/)
 target/
 
-# Python bytecode / packaging
+# Python (comparison baseline)
 __pycache__/
 *.py[cod]
 *$py.class
@@ -9,6 +9,8 @@ __pycache__/
 .eggs/
 python/build/
 python/dist/
+python/*/build/
+python/*/dist/
 
 # Virtual environments
 .venv/

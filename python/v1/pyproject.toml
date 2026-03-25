@@ -1,7 +1,7 @@
 [project]
 name = "prompt-clustering-viz"
 version = "0.1.0"
-description = "UMAP + HDBSCAN visualization for user prompts"
+description = "UMAP + HDBSCAN visualization for user prompts (comparison baseline vs Java pipeline)"
 requires-python = ">=3.10"
 dependencies = [
     "hdbscan>=0.8.33",

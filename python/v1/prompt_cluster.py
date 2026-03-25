@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 from collections import defaultdict
 from pathlib import Path
 
 _TAG = "[PYTHON|MiniLM+UMAP]"
+_ENV_VERSION = "SEMANTIC_CLUSTERING_VERSION"
 
 
 def _log(msg: str) -> None:
@@ -32,13 +34,12 @@ _LIST_PREFIX = re.compile(r"^\d+\.\s*")
 
 
 def _process_prompt_text(s: str) -> str | None:
-    """Strip list numbering, inline comments, and digit runs for clustering."""
+    """Strip list numbering and inline comments; keep digits (times, refs, etc.)."""
     t = _LIST_PREFIX.sub("", s).strip()
     if "#" in t:
         t = t.split("#", 1)[0].strip()
     if not t:
         return None
-    t = re.sub(r"\d+", " ", t)
     t = re.sub(r"\s+", " ", t).strip()
     return t or None
 
@@ -97,19 +98,33 @@ def _write_clustering_json(
     )
 
 
+def _infer_repo_root(start_file: Path) -> Path:
+    """
+    Find the repository root by walking upwards until we see `data/prompts.txt`.
+
+    This keeps the script working after moving into `python/v1/` (and later `python/v2/`).
+    """
+    start_dir = start_file if start_file.is_dir() else start_file.parent
+    for p in (start_dir, *start_dir.parents):
+        if (p / "data" / "prompts.txt").is_file():
+            return p
+    # Fallback: keep a sensible relative structure.
+    return start_dir.parent if start_dir.parent is not None else start_dir
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--prompts",
         type=Path,
         default=None,
-        help="Text file with one prompt per line: # comments, section headers, list numbers, and digits stripped for processing (default: <repo>/data/prompts.txt)",
+        help="Text file with one prompt per line: # comments and leading list numbers (e.g. '1. ') are stripped; body text is unchanged (default: <repo>/data/prompts.txt)",
     )
     parser.add_argument(
         "--output",
         type=Path,
         default=None,
-        help="PNG path for the scatter plot (default: <repo>/outputs/python_umap_hdbscan.png)",
+        help="PNG path for the scatter plot (default: <repo>/outputs/python_v1_umap_hdbscan.png)",
     )
     parser.add_argument(
         "--show",
@@ -118,11 +133,15 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    repo_root = Path(__file__).resolve().parent.parent
+    repo_root = _infer_repo_root(Path(__file__).resolve())
+    version_tag = Path(__file__).resolve().parent.name  # expected: v1
+    env_version = (os.getenv(_ENV_VERSION) or "").strip()  # may be set by Makefile
+    if env_version and env_version != version_tag:
+        _log(f"Version mismatch: env={env_version!r} path={version_tag!r} (using path)")
     prompts_path = args.prompts or (repo_root / "data" / "prompts.txt")
     if not prompts_path.is_file():
         raise SystemExit(f"Prompts file not found: {prompts_path.resolve()}")
-    out_path = args.output or (repo_root / "outputs" / "python_umap_hdbscan.png")
+    out_path = args.output or (repo_root / "outputs" / f"python_{version_tag}_umap_hdbscan.png")
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     bar = "=" * 76
@@ -131,6 +150,7 @@ def main() -> None:
         "  PYTHON — SentenceTransformers (MiniLM) · UMAP 2D · HDBSCAN on embeddings",
         flush=True,
     )
+    print(f"  Version: {version_tag}", flush=True)
     print("  Noise points: cluster id -1", flush=True)
     print(bar, flush=True)
 
