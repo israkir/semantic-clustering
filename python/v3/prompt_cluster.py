@@ -13,6 +13,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Mapping
 
+_ID_TOKEN_RE = re.compile(r"\\b[A-Z]{2,3}(?:-[A-Z0-9]+)+\\b")
+
 _TAG = "[PYTHON|BERTopic|v3]"
 _ENV_VERSION = "SEMANTIC_CLUSTERING_VERSION"
 
@@ -24,8 +26,19 @@ def _log(msg: str) -> None:
 _LIST_PREFIX_RE = re.compile(r"^\\s*\\d+\\.\\s*")
 _INLINE_COMMENT_RE = re.compile(r"\\s*#.*$")
 
-# Token shape for structured ids in this dataset: e.g. PH-LAT-9951, EL-HT-7707, APT-PH-201.
-_ID_TOKEN_RE = re.compile(r"\\b[A-Z]{2,3}(?:-[A-Z0-9]+)+\\b")
+_STOPWORDS: set[str] | None = None
+
+
+def _get_stopwords() -> set[str]:
+    global _STOPWORDS
+    if _STOPWORDS is None:
+        try:
+            from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+
+            _STOPWORDS = set(ENGLISH_STOP_WORDS)
+        except Exception:
+            _STOPWORDS = set()
+    return _STOPWORDS
 
 
 def _infer_repo_root(start_file: Path) -> Path:
@@ -78,39 +91,80 @@ def _truncate_label(s: str, *, max_len: int) -> str:
     return s[: max_len - 1].rstrip() + "…"
 
 
-def _build_topic_label_map(topic_info: Any, *, top_fallback_words: int) -> dict[int, str]:
-    """
-    Create `topic_id -> label` mapping using BERTopic's built-in labels.
+def _normalize_word_for_label(w: str) -> str:
+    # BERTopic sometimes emits underscores in words/phrases. Make it human-readable.
+    return w.replace("_", " ").strip()
 
-    Fallback: if BERTopic does not provide a label for a topic, derive it from the
-    topic representation words.
+
+def _build_topic_label_map_from_topic_model(
+    topic_model: Any,
+    topic_ids: list[int],
+    *,
+    top_fallback_words: int,
+) -> dict[int, str]:
     """
+    Create `topic_id -> label` mapping from BERTopic topic representations.
+
+    We intentionally avoid `get_topic_info().Name` because it can include
+    underscore-joined artifacts (e.g. "0_is_the_for_to") that aren't great labels.
+    """
+    stopwords = _get_stopwords()
     topic_id_to_label: dict[int, str] = {}
 
-    if topic_info is None:
-        return topic_id_to_label
+    # BERTopic stores top words per topic in `topic_representations_`.
+    reps = getattr(topic_model, "topic_representations_", None) or {}
 
-    # topic_info is a pandas DataFrame.
-    rows = topic_info.to_dict(orient="records")
-    for row in rows:
-        tid = int(row["Topic"])
+    def _is_good_candidate_token(tok: str) -> bool:
+        t = tok.strip()
+        if not t:
+            return False
+        t_low = t.lower()
+        if t_low in stopwords:
+            return False
+        # Drop trivial tokens.
+        if len(t_low) <= 2:
+            return False
+        # Drop tokens that are mostly numeric or punctuation.
+        if not re.search(r"[a-zA-Z0-9]", t):
+            return False
+        # Drop remaining id-like tokens (belt-and-suspenders).
+        if _ID_TOKEN_RE.search(t):
+            return False
+        return True
+
+    for tid in sorted(set(topic_ids)):
         if tid == -1:
             topic_id_to_label[tid] = "noise"
             continue
 
-        name = row.get("Name")
-        if isinstance(name, str) and name.strip():
-            topic_id_to_label[tid] = name.strip()
+        rep_list = reps.get(tid)
+        if not rep_list:
+            topic_id_to_label[tid] = f"topic_{tid}"
             continue
 
-        representation = row.get("Representation")
-        if isinstance(representation, list) and representation:
-            words = [w for w in representation if isinstance(w, str)]
-            if words:
-                topic_id_to_label[tid] = ", ".join(words[:top_fallback_words])
+        candidates: list[str] = []
+        for item in rep_list:
+            # Expected shape: (word, score)
+            if isinstance(item, (list, tuple)) and len(item) >= 1 and isinstance(item[0], str):
+                w = item[0]
+            elif isinstance(item, str):
+                w = item
+            else:
                 continue
 
-        topic_id_to_label[tid] = f"topic_{tid}"
+            w_norm = _normalize_word_for_label(w)
+            if not _is_good_candidate_token(w_norm):
+                continue
+            if w_norm in candidates:
+                continue
+            candidates.append(w_norm)
+            if len(candidates) >= max(1, top_fallback_words):
+                break
+
+        if not candidates:
+            topic_id_to_label[tid] = f"topic_{tid}"
+        else:
+            topic_id_to_label[tid] = " / ".join(candidates[:top_fallback_words])
 
     return topic_id_to_label
 
@@ -208,6 +262,7 @@ def main() -> None:
     # Import BERTopic lazily to keep startup time lower when not running v3.
     from bertopic import BERTopic
     from sentence_transformers import SentenceTransformer
+    from sklearn.feature_extraction.text import CountVectorizer
     from sklearn.decomposition import PCA
     from umap import UMAP
 
@@ -230,6 +285,9 @@ def main() -> None:
             low_memory=True,
         )
 
+    # Stopword filtering helps keep topic keywords focused on intents.
+    vectorizer = CountVectorizer(stop_words="english", ngram_range=(ngram_low, ngram_high))
+
     topic_model = BERTopic(
         language="english",
         top_n_words=args.top_n_words,
@@ -238,6 +296,7 @@ def main() -> None:
         nr_topics=nr_topics,
         calculate_probabilities=False,
         umap_model=umap_model,
+        vectorizer_model=vectorizer,
         verbose=False,
     )
 
@@ -248,9 +307,9 @@ def main() -> None:
     topics, _ = topic_model.fit_transform(prompts, doc_embeddings)
     topic_ids = [int(t) for t in topics]
 
-    topic_info = topic_model.get_topic_info()
-    topic_id_to_label = _build_topic_label_map(
-        topic_info,
+    topic_id_to_label = _build_topic_label_map_from_topic_model(
+        topic_model,
+        topic_ids,
         top_fallback_words=args.top_fallback_words,
     )
 
